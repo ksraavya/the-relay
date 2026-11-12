@@ -1,0 +1,132 @@
+[
+  {
+    "id": "q01",
+    "category": "factual",
+    "source_papers": ["1706.03762v7"],
+    "question": "What BLEU score did the Transformer big model achieve on the WMT 2014 English-to-German translation task, and how did that compare to all previously reported results at the time?",
+    "answer_hint": "28.4 BLEU; it outperformed all previously published models including ensembles, by more than 2 BLEU points"
+  },
+  {
+    "id": "q02",
+    "category": "factual",
+    "source_papers": ["1706.03762v7"],
+    "question": "In the base Transformer model, how many layers does the encoder stack contain, how many attention heads does each multi-head attention sublayer use, and what is the model's internal dimension d_model?",
+    "answer_hint": "N=6 encoder layers (and 6 decoder layers), h=8 attention heads, d_model=512"
+  },
+  {
+    "id": "q03",
+    "category": "factual",
+    "source_papers": ["1706.03762v7"],
+    "question": "What optimizer was used to train the original Transformer, and what was distinctive about the learning rate schedule employed during training?",
+    "answer_hint": "Adam optimizer with beta1=0.9, beta2=0.98, epsilon=1e-9; custom schedule that increases linearly for the first 4000 warmup steps then decreases proportionally to the inverse square root of the step number"
+  },
+  {
+    "id": "q04",
+    "category": "factual",
+    "source_papers": ["1706.03762v7"],
+    "question": "What label smoothing value did Vaswani et al. use when training the Transformer, and what trade-off does label smoothing introduce according to the paper?",
+    "answer_hint": "epsilon_ls=0.1; it hurts perplexity because the model learns to be less confident, but improves BLEU score and accuracy"
+  },
+  {
+    "id": "q05",
+    "category": "factual",
+    "source_papers": ["2410.00037v1"],
+    "question": "What are the theoretical and practical end-to-end latency figures for Moshi's real-time spoken dialogue system?",
+    "answer_hint": "Theoretical latency of 160 ms; 200 ms in practice"
+  },
+  {
+    "id": "q06",
+    "category": "factual",
+    "source_papers": ["2410.00037v1"],
+    "question": "What is the 'Inner Monologue' technique introduced in the Moshi paper, and what two capabilities does it enable?",
+    "answer_hint": "Predicting time-aligned text tokens as a prefix before audio tokens at each step; enables (1) improved linguistic quality of generated speech and (2) streaming speech recognition and text-to-speech as byproducts"
+  },
+  {
+    "id": "q07",
+    "category": "factual",
+    "source_papers": ["2410.00037v1"],
+    "question": "How does Moshi differ from prior spoken dialogue systems in terms of its communication model, and what framework does the paper introduce to describe this difference?",
+    "answer_hint": "Moshi is a full-duplex system — it can speak and listen simultaneously; prior systems rely on pipelines (VAD → ASR → LLM → TTS) that require turn-taking, whereas Moshi uses a full-duplex spoken dialogue framework"
+  },
+  {
+    "id": "q08",
+    "category": "factual",
+    "source_papers": ["2507.07955v2"],
+    "question": "What specific preprocessing barrier does the H-Net paper argue prevents true end-to-end foundation models, and what does H-Net replace it with?",
+    "answer_hint": "Tokenization (handcrafted heuristics for segmenting raw data); H-Net replaces it with a learned dynamic chunking (DC) mechanism that automatically discovers content- and context-dependent segmentation jointly with the rest of the model"
+  },
+  {
+    "id": "q09",
+    "category": "factual",
+    "source_papers": ["2507.07955v2"],
+    "question": "How does H-Net's performance compare to a token-based Transformer of twice its own size, according to the paper?",
+    "answer_hint": "H-Net matches the performance of the token-based Transformer of twice its size, while also showing significantly better data scaling"
+  },
+  {
+    "id": "q10",
+    "category": "factual",
+    "source_papers": ["1706.03762v7", "2507.07955v2"],
+    "question": "Both the original Transformer and H-Net address sequential language modeling, but they make opposite assumptions about one preprocessing step. What is that step, and what is each paper's position on it?",
+    "answer_hint": "Tokenization: the Transformer requires a tokenizer to convert raw text into discrete token IDs before processing; H-Net is explicitly designed to eliminate tokenization by learning segmentation end-to-end from raw character or byte data"
+  },
+  {
+    "id": "q11",
+    "category": "unanswerable",
+    "source_papers": [],
+    "question": "What was the total electricity consumption or CO2-equivalent carbon footprint of the original Transformer model training run reported in 'Attention Is All You Need'?",
+    "answer_hint": "UNANSWERABLE — the paper reports training time and hardware (8 P100 GPUs, 12/3.5 days) but does not report energy consumption or carbon footprint metrics"
+  },
+  {
+    "id": "q12",
+    "category": "unanswerable",
+    "source_papers": [],
+    "question": "What is the retail API pricing per token for the Moshi service as offered commercially by Kyutai at the time of the paper's publication?",
+    "answer_hint": "UNANSWERABLE — the Moshi paper does not discuss pricing, commercial API availability, or licensing terms; it only references the open-source GitHub release"
+  },
+  {
+    "id": "q13",
+    "category": "unanswerable",
+    "source_papers": [],
+    "question": "On the WMT 2014 English-to-German translation benchmark, what BLEU score does the H-Net (Dynamic Chunking) model achieve?",
+    "answer_hint": "UNANSWERABLE — H-Net is evaluated on language modeling perplexity and character-level tasks (English, Chinese, code, DNA); it does not report results on the WMT 2014 machine translation benchmark, which belongs to the Transformer paper"
+  },
+  {
+    "id": "q14",
+    "category": "unanswerable",
+    "source_papers": [],
+    "question": "Which follow-up papers, published after Moshi, have extended the Inner Monologue technique to multilingual real-time speech dialogue?",
+    "answer_hint": "UNANSWERABLE — none of the three papers in this corpus can reference work published after themselves; this requires knowledge outside the corpus"
+  },
+  {
+    "id": "q15",
+    "category": "bm25_tricky",
+    "source_papers": ["1706.03762v7"],
+    "question": "The Transformer processes all input tokens in parallel rather than sequentially, so it has no inherent sense of which word came first or last in a sentence. What mechanism does it use to give the model this information, and how is it computed?",
+    "answer_hint": "Positional encodings added to input embeddings; computed using sine and cosine functions of different frequencies: PE(pos, 2i) = sin(pos / 10000^(2i/d_model)), PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model))",
+    "bm25_pitfall": "The question avoids the term 'positional encoding' entirely, using 'which word came first' and 'inherent sense' instead — a keyword retriever may rank passages about attention or embeddings over the positional encoding section"
+  },
+  {
+    "id": "q16",
+    "category": "bm25_tricky",
+    "source_papers": ["2410.00037v1"],
+    "question": "Traditional voice assistants must fully finish listening before they can start speaking. Moshi breaks this constraint by operating in a mode where speaking and listening happen concurrently. What is the name of this concurrent communication paradigm as used in the paper?",
+    "answer_hint": "Full-duplex (spoken dialogue); the paper explicitly contrasts it with half-duplex or pipeline-based approaches that require the system to wait for a user to stop talking",
+    "bm25_pitfall": "The question describes full-duplex through its behavioral consequence ('speaking and listening concurrently') without using the term — BM25 would need to bridge 'finish listening before speaking' to the paper's vocabulary around 'full-duplex' and 'simultaneous'"
+  },
+  {
+    "id": "q17",
+    "category": "bm25_tricky",
+    "source_papers": ["2507.07955v2"],
+    "question": "Instead of using fixed rules to split raw data into discrete units (such as subword merges learned offline), H-Net automatically discovers appropriate boundaries during training. What is the paper's specific name for this learned boundary-discovery process?",
+    "answer_hint": "Dynamic chunking (DC); the paper explicitly contrasts it with handcrafted heuristics and BPE-style offline tokenization",
+    "bm25_pitfall": "The question avoids the words 'tokenization', 'chunking', and 'segmentation', using 'boundary-discovery' and 'split raw data into discrete units' instead — BM25 may retrieve passages discussing tokenization comparisons rather than the section defining dynamic chunking"
+  },
+  {
+    "id": "q18",
+    "category": "bm25_tricky",
+    "source_papers": ["1706.03762v7"],
+    "question": "In the Transformer, every encoder and decoder block wraps two sublayer types with the same structural pattern: a residual shortcut is added around each sublayer and then the sum is normalized. What are those two sublayer types, and what normalization operation is applied?",
+    "answer_hint": "The two sublayers are (1) multi-head self-attention and (2) position-wise feed-forward network; the operation is Layer Normalization: LayerNorm(x + Sublayer(x))",
+    "bm25_pitfall": "The question describes the residual + normalization pattern abstractly ('residual shortcut', 'sum is normalized') without using 'LayerNorm', 'residual connection', or 'sublayer' — BM25 may retrieve residual-related passages from other sections instead of the specific block description"
+  }
+]
