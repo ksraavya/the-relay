@@ -308,6 +308,23 @@ def _gen_words(n: int) -> list[str]:
     return [_VOCAB[i % len(_VOCAB)] for i in range(n)]
 
 
+def _classify_call(body: dict) -> str:
+    """
+    Inspect message text to decide which pipeline step this is.
+    Returns: 'router' | 'fix' | 'draft'
+    """
+    text = " ".join(
+        (m.get("content") or "") for m in body.get("messages", [])
+    ).lower()
+    # _ROUTER_SYS contains "scope checker" and "in_scope / out_scope"
+    if "scope checker" in text or "in_scope" in text or "out_scope" in text:
+        return "router"
+    # fix loop injects "[REVISION REQUIRED]" into the user message
+    if "revision required" in text:
+        return "fix"
+    return "draft"
+
+
 def _rl_headers(st: AppState) -> dict[str, str]:
     return {
         "x-ratelimit-limit-requests":     str(st.rpd.limit),
@@ -408,7 +425,21 @@ async def _stream_sse(
     # ── normal stream ─────────────────────────────────────────────────────────
     yield _chunk({"role": "assistant", "content": ""})   # role chunk
 
-    words = _gen_words(output_tokens) or ["OK"]
+    call_kind = _classify_call(body)
+    if call_kind == "router":
+        words = ["IN_SCOPE"]
+    elif call_kind == "fix":
+        # Return a corrected draft with a citation the verifier will accept.
+        # The page number here is 4 — always present in the Transformer PDF.
+        words = ["The", "Transformer", "uses", "self-attention",
+                 "[1706.03762v7,", "p.4]", "for", "sequence", "modeling."]
+    else:
+        # Normal draft: use the vocab but inject a citation early so the
+        # programmatic verifier always finds at least one grounded citation.
+        draft_words = _gen_words(max(1, output_tokens - 6))
+        words = (draft_words[:4]
+                 + ["[1706.03762v7,", "p.4]"]
+                 + draft_words[4:])
     remaining_ms   = max(20.0, total_ms - ttft_ms)
     inter_delay_ms = remaining_ms / len(words)
 
@@ -579,7 +610,14 @@ async def chat_completions(request: Request):
         await asyncio.sleep(total_ms / 1000)
         await _release()
         st.stats["ok_requests"] += 1
-        content = " ".join(_gen_words(output_tokens))
+        call_kind = _classify_call(body)
+        if call_kind == "router":
+            content = "IN_SCOPE"
+        elif call_kind == "fix":
+            content = "The Transformer uses self-attention [1706.03762v7, p.4] to process sequences in parallel."
+        else:
+            draft = _gen_words(max(1, output_tokens - 6))
+            content = " ".join(draft[:4] + ["[1706.03762v7, p.4]"] + draft[4:])
         return JSONResponse(
             content={
                 "id":      req_id,
