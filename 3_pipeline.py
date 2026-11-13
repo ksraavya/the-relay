@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 3_pipeline.py  —  The Relay: 4-step async RAG pipeline
 ════════════════════════════════════════════════════════════════════════════════
